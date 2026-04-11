@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Home — ListShare{% endblock %}
+
+{% block extra_css %}
+<style>
+    .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .feed-header h1 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; }
+    .list-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem; transition: border-color 0.2s, transform 0.15s; cursor: pointer;
+    }
+    .list-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .card-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .avatar {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .card-author { font-size: 0.85rem; color: var(--muted); }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .card-items { list-style: none; margin-bottom: 1rem; }
+    .card-items li { display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0; font-size: 0.9rem; color: #b0b0c0; border-bottom: 1px solid var(--border); }
+    .card-items li:last-child { border-bottom: none; }
+    .rank { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.75rem; color: var(--accent); width: 18px; flex-shrink: 0; }
+    .card-actions { display: flex; gap: 1.25rem; margin-top: 0.75rem; }
+    .action-btn { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; font-family: 'DM Sans', sans-serif; }
+    .action-btn:hover { color: var(--accent); }
+    .compose-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s; }
+    .compose-bar:hover { border-color: var(--accent); }
+    .compose-placeholder { color: var(--muted); font-size: 0.95rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="feed-header">
+    <h1>Your Feed</h1>
+    <a href="#" class="btn btn-primary">+ New List</a>
+</div>
+
+<div class="compose-bar">
+    <div class="avatar">{{ user.username|first|upper }}</div>
+    <span class="compose-placeholder">Share a list with the world...</span>
+</div>
+
+{% for list in lists %}
+<div class="list-card">
+    <div class="card-meta">
+        <div class="avatar">{{ list.author|first|upper }}</div>
+        <span class="card-author">@{{ list.author }}</span>
+    </div>
+    <div class="card-title">{{ list.title }}</div>
+    <ol class="card-items">
+        {% for item in list.items %}
+        <li>
+            <span class="rank">{{ forloop.counter }}.</span>
+            {{ item }}
+        </li>
+        {% endfor %}
+    </ol>
+    <div class="card-actions">
+        <button class="action-btn">♥ {{ list.likes }}</button>
+        <button class="action-btn">💬 {{ list.comments }}</button>
+        <button class="action-btn">↗ Share</button>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

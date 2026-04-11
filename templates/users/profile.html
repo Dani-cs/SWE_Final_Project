@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}@{{ user.username }} — ListShare{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+    .profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .profile-info h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; }
+    .profile-info .handle { color: var(--muted); font-size: 0.9rem; margin-top: 0.15rem; }
+    .profile-stats { display: flex; gap: 2rem; margin-top: 0.75rem; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
+    .stat-label { font-size: 0.75rem; color: var(--muted); }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .empty-state p { margin-bottom: 1rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="profile-avatar">{{ user.username|first|upper }}</div>
+    <div class="profile-info">
+        <h2>{{ user.get_full_name|default:user.username }}</h2>
+        <div class="handle">@{{ user.username }}</div>
+        <div class="profile-stats">
+            <div class="stat"><div class="stat-num">0</div><div class="stat-label">Lists</div></div>
+            <div class="stat"><div class="stat-num">0</div><div class="stat-label">Followers</div></div>
+            <div class="stat"><div class="stat-num">0</div><div class="stat-label">Following</div></div>
+        </div>
+    </div>
+</div>
+<div class="empty-state">
+    <p>You haven't shared any lists yet.</p>
+    <a href="#" class="btn btn-primary">+ Create your first list</a>
+</div>
+{% endblock %}
