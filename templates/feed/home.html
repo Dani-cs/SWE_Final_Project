@@ -27,7 +27,7 @@
     .card-actions { display: flex; gap: 1.25rem; margin-top: 0.75rem; }
     .action-btn { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; font-family: 'DM Sans', sans-serif; }
     .action-btn:hover { color: var(--accent); }
-    .compose-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s; }
+    .compose-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s; text-decoration: none; }
     .compose-bar:hover { border-color: var(--accent); }
     .compose-placeholder { color: var(--muted); font-size: 0.95rem; }
 </style>
@@ -36,34 +36,42 @@
 {% block content %}
 <div class="feed-header">
     <h1>Your Feed</h1>
-    <a href="#" class="btn btn-primary">+ New List</a>
+    <a href="{% url 'create_list' %}" class="btn btn-primary">+ New List</a>
 </div>
 
-<div class="compose-bar">
+<a href="{% url 'create_list' %}" class="compose-bar">
     <div class="avatar">{{ user.username|first|upper }}</div>
     <span class="compose-placeholder">Share a list with the world...</span>
-</div>
+</a>
 
 {% for list in lists %}
 <div class="list-card">
     <div class="card-meta">
-        <div class="avatar">{{ list.author|first|upper }}</div>
-        <span class="card-author">@{{ list.author }}</span>
+        <div class="avatar">{{ list.author.username|first|upper }}</div>
+        <span class="card-author">@{{ list.author.username }}</span>
     </div>
     <div class="card-title">{{ list.title }}</div>
-    <ol class="card-items">
-        {% for item in list.items %}
-        <li>
-            <span class="rank">{{ forloop.counter }}.</span>
-            {{ item }}
-        </li>
+    {% if list.list_type == 'ordered' %}
+    <ol class="card-items" style="list-style:none;">
+        {% for item in list.items.all %}
+        <li><span class="rank">{{ forloop.counter }}.</span>{{ item.text }}</li>
         {% endfor %}
     </ol>
+    {% else %}
+    <ul class="card-items" style="list-style:none;">
+        {% for item in list.items.all %}
+        <li><span class="rank">•</span>{{ item.text }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <div class="card-actions">
-        <button class="action-btn">♥ {{ list.likes }}</button>
-        <button class="action-btn">💬 {{ list.comments }}</button>
         <button class="action-btn">↗ Share</button>
     </div>
+</div>
+{% empty %}
+<div style="text-align:center; color:var(--muted); padding: 3rem 0;">
+    <p style="font-size:1.1rem;">No lists yet.</p>
+    <p style="font-size:0.9rem; margin-top:0.5rem;">Be the first to <a href="{% url 'create_list' %}" style="color:var(--accent);">share one</a>.</p>
 </div>
 {% endfor %}
 {% endblock %}
