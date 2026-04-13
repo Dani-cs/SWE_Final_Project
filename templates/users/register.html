@@ -3,46 +3,171 @@
 
 {% block extra_css %}
 <style>
-    .auth-card { max-width: 420px; margin: 3rem auto; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; }
-    .auth-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.25rem; }
-    .auth-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.75rem; }
-    .form-group { margin-bottom: 1rem; }
-    label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
-    input[type="text"], input[type="email"], input[type="password"] {
-        width: 100%; background: var(--bg); border: 1px solid var(--border);
-        border-radius: 8px; padding: 0.7rem 0.9rem; color: var(--text);
-        font-size: 0.95rem; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; outline: none;
+    .auth-card {
+        max-width: 420px;
+        margin: 2rem auto;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
     }
-    input:focus { border-color: var(--accent); }
-    .errorlist { list-style: none; margin-top: 0.4rem; }
-    .errorlist li { font-size: 0.8rem; color: #e86e6e; }
-    .btn-full { width: 100%; padding: 0.75rem; font-size: 1rem; border-radius: 10px; margin-top: 0.5rem; }
-    .auth-footer { text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--muted); }
-    .auth-footer a { color: var(--accent); text-decoration: none; }
+
+    .auth-banner {
+        background: var(--accent);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .auth-banner-text {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 900;
+        font-size: 1.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #fff;
+        line-height: 1;
+    }
+
+    .auth-banner-tag {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(255,255,255,0.75);
+        background: rgba(255,255,255,0.15);
+        padding: 0.25rem 0.6rem;
+        border-radius: 3px;
+    }
+
+    .auth-body { padding: 1.5rem; }
+
+    .form-group { margin-bottom: 0.85rem; }
+
+    label {
+        display: block;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--muted2);
+        margin-bottom: 0.35rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"] {
+        width: 100%;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 0.65rem 0.85rem;
+        color: var(--text);
+        font-size: 0.92rem;
+        font-family: 'Barlow', sans-serif;
+        transition: border-color 0.15s;
+        outline: none;
+    }
+    input:focus { border-color: var(--accent); background: var(--surface3); box-shadow: 0 0 0 2px rgba(0,229,160,0.1); }
+
+    .errorlist { list-style: none; margin-top: 0.35rem; }
+    .errorlist li {
+        font-size: 0.78rem;
+        color: var(--accent3);
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .btn-full {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+        border-radius: var(--radius);
+        margin-top: 0.75rem;
+        letter-spacing: 0.1em;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.83rem;
+        color: var(--muted);
+        font-family: 'Barlow Condensed', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .auth-footer a { color: var(--accent); text-decoration: none; font-weight: 700; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    .perks {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .perk {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 0.5rem 0.75rem;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted2);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .perk-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="auth-card">
-    <div class="auth-title">Create account</div>
-    <div class="auth-sub">Join ListShare and start sharing your lists.</div>
-    <form method="POST">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
-                <ul class="errorlist">
-                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
-                </ul>
-            {% endif %}
+    <div class="auth-banner">
+        <div class="auth-banner-text">Create Account</div>
+        <div class="auth-banner-tag">Free</div>
+    </div>
+
+    <div class="auth-body">
+        <div class="perks">
+            <div class="perk"><span class="perk-dot"></span>Create lists</div>
+            <div class="perk"><span class="perk-dot"></span>Follow users</div>
+            <div class="perk"><span class="perk-dot"></span>Like & comment</div>
+            <div class="perk"><span class="perk-dot"></span>Private lists</div>
         </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-    </form>
-    <div class="auth-footer">
-        Already have an account? <a href="{% url 'login' %}">Log in</a>
+
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-full">Create Account →</button>
+        </form>
+        <div class="auth-footer">
+            Have an account? <a href="{% url 'login' %}">Log In</a>
+        </div>
     </div>
 </div>
 {% endblock %}

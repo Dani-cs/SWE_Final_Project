@@ -3,25 +3,143 @@
 
 {% block extra_css %}
 <style>
-    .profile-header { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
-    .profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: #fff; flex-shrink: 0; }
-    .profile-info h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; }
-    .profile-info .handle { color: var(--muted); font-size: 0.9rem; margin-top: 0.15rem; }
-    .profile-stats { display: flex; gap: 2rem; margin-top: 0.75rem; }
-    .stat { text-align: center; }
-    .stat-num { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
-    .stat-label { font-size: 0.75rem; color: var(--muted); }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .section-header h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    .list-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; transition: border-color 0.2s, transform 0.15s; }
-    .list-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-    .card-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem; }
-    .card-items { list-style: none; margin-bottom: 0.5rem; }
-    .card-items li { display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0; font-size: 0.9rem; color: #b0b0c0; border-bottom: 1px solid var(--border); }
+    .profile-header {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+    }
+
+    .profile-avatar {
+        width: 60px; height: 60px; border-radius: 6px;
+        background: var(--accent2);
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.6rem; font-weight: 900;
+        color: #fff; flex-shrink: 0;
+        letter-spacing: 0.02em;
+    }
+
+    .profile-info h2 {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 0.1rem;
+    }
+
+    .handle {
+        color: var(--muted2);
+        font-size: 0.82rem;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.6rem;
+    }
+
+    .profile-stats { display: flex; gap: 1.25rem; }
+    .stat { }
+    .stat-num {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 900;
+        font-size: 1.4rem;
+        color: var(--accent);
+        line-height: 1;
+    }
+    .stat-label {
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .section-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 0.85rem;
+        padding: 0.4rem 0;
+        border-bottom: 2px solid var(--accent);
+    }
+    .section-header h3 {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 900;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .list-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+        transition: border-color 0.15s;
+    }
+    .list-card:hover { border-color: var(--accent2); }
+
+    .card-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 0.85rem 1.1rem 0.6rem;
+    }
+
+    .card-items { list-style: none; border-top: 1px solid var(--border); }
+    .card-items li {
+        display: flex; align-items: stretch;
+        font-size: 0.88rem;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        transition: background 0.1s;
+    }
     .card-items li:last-child { border-bottom: none; }
-    .rank { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.75rem; color: var(--accent); width: 18px; flex-shrink: 0; }
-    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
-    .empty-state p { margin-bottom: 1rem; }
+    .card-items li:hover { background: var(--surface2); }
+
+    .rank {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 900;
+        font-size: 0.78rem;
+        color: var(--accent);
+        background: var(--surface3);
+        width: 28px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .rank.bullet {
+        background: var(--surface3);
+        color: var(--accent2);
+        font-size: 1rem;
+    }
+
+    .item-text { padding: 0.5rem 0.9rem; }
+
+    .empty-state {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--muted);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+    }
+    .empty-state p {
+        font-family: 'Barlow Condensed', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.88rem;
+        margin-bottom: 1rem;
+    }
 </style>
 {% endblock %}
 
@@ -41,7 +159,7 @@
 </div>
 
 <div class="section-header">
-    <h3>{% if is_own_profile %}Your Lists{% else %}Lists by @{{ profile_user.username }}{% endif %}</h3>
+    <h3>{% if is_own_profile %}Your Lists{% else %}@{{ profile_user.username }}'s Lists{% endif %}</h3>
     {% if is_own_profile %}
         <a href="{% url 'create_list' %}" class="btn btn-primary">+ New List</a>
     {% endif %}
@@ -53,13 +171,13 @@
     {% if list.list_type == 'ordered' %}
     <ol class="card-items" style="list-style:none;">
         {% for item in list.items.all %}
-        <li><span class="rank">{{ forloop.counter }}.</span>{{ item.text }}</li>
+        <li><span class="rank">{{ forloop.counter }}</span><span class="item-text">{{ item.text }}</span></li>
         {% endfor %}
     </ol>
     {% else %}
     <ul class="card-items" style="list-style:none;">
         {% for item in list.items.all %}
-        <li><span class="rank">•</span>{{ item.text }}</li>
+        <li><span class="rank bullet">•</span><span class="item-text">{{ item.text }}</span></li>
         {% endfor %}
     </ul>
     {% endif %}

@@ -5,53 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ListShare{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --bg: #0a0a0f;
-            --surface: #13131a;
-            --border: #1e1e2e;
-            --accent: #7c6af7;
-            --accent2: #f76a8a;
-            --text: #e8e8f0;
-            --muted: #6b6b80;
-            --radius: 12px;
+            --bg: #0d0d12;
+            --surface: #141419;
+            --surface2: #1c1c24;
+            --surface3: #22222c;
+            --border: #2a2a36;
+            --accent: #00b4d8;
+            --accent2: #023e8a;
+            --accent3: #caf0f8;
+            --text: #f0f0f8;
+            --muted: #5a5a72;
+            --muted2: #8888a8;
+            --radius: 6px;
         }
-        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Barlow', sans-serif;
+            min-height: 100vh;
+        }
+
         nav {
             position: sticky; top: 0; z-index: 100;
-            background: rgba(10,10,15,0.85); backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            padding: 0 2rem; height: 60px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--border);
+            padding: 0 2rem; height: 56px;
             display: flex; align-items: center; justify-content: space-between;
         }
+
         .nav-logo {
-            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
             text-decoration: none;
+            color: var(--text);
         }
-        .nav-links { display: flex; gap: 1rem; align-items: center; }
-        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--text); }
-        .btn { padding: 0.45rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.2s; border: none; }
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-primary:hover { background: #6a59e0; }
-        .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-        .container { max-width: 680px; margin: 0 auto; padding: 2rem 1rem; }
+
+        .nav-logo .logo-accent { color: var(--accent); }
+
+        .nav-links { display: flex; gap: 0.5rem; align-items: center; }
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius);
+            transition: all 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.95rem;
+        }
+        .nav-links a:hover { color: var(--text); background: var(--surface2); }
+
+        .btn {
+            padding: 0.45rem 1.1rem;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+            border: none;
+            font-family: 'Barlow Condensed', sans-serif;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover { background: #0096b4; box-shadow: 0 0 16px rgba(0,180,216,0.4); }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+        .btn-outline:hover { border-color: var(--muted2); color: var(--text); }
+
+        .container { max-width: 680px; margin: 0 auto; padding: 1.75rem 1rem; }
+
         .messages { list-style: none; margin-bottom: 1rem; }
-        .messages li { padding: 0.75rem 1rem; border-radius: var(--radius); margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .messages .success { background: #1a2e1a; color: #6ee86e; border: 1px solid #2a4a2a; }
-        .messages .error { background: #2e1a1a; color: #e86e6e; border: 1px solid #4a2a2a; }
-        .messages .info { background: #1a1a2e; color: #6e8ee8; border: 1px solid #2a2a4a; }
+        .messages li {
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'Barlow Condensed', sans-serif;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .messages .success { background: rgba(0,180,216,0.1); color: var(--accent); border: 1px solid rgba(0,180,216,0.2); }
+        .messages .error { background: rgba(202,240,248,0.1); color: var(--accent3); border: 1px solid rgba(202,240,248,0.2); }
+        .messages .info { background: rgba(2,62,138,0.15); color: #90b4ff; border: 1px solid rgba(2,62,138,0.3); }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 <nav>
-    <a class="nav-logo" href="{% url 'home' %}">ListShare</a>
+    <a class="nav-logo" href="{% url 'home' %}">List<span class="logo-accent">Share</span></a>
     <div class="nav-links">
         {% if user.is_authenticated %}
             <a href="{% url 'profile' %}">@{{ user.username }}</a>

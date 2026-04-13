@@ -3,64 +3,184 @@
 
 {% block extra_css %}
 <style>
-    .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .feed-header h1 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; }
-    .list-card {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: var(--radius); padding: 1.25rem 1.5rem;
-        margin-bottom: 1rem; transition: border-color 0.2s, transform 0.15s; cursor: pointer;
+    .feed-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 1.25rem;
     }
-    .list-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-    .card-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .feed-header h1 {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text);
+    }
+    .feed-header h1 span { color: var(--accent); }
+
+    .compose-bar {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 0.85rem 1.1rem;
+        margin-bottom: 1.25rem;
+        display: flex; align-items: center; gap: 0.75rem;
+        cursor: pointer; transition: all 0.15s; text-decoration: none;
+    }
+    .compose-bar:hover { border-color: var(--accent); background: var(--surface3); }
+
     .avatar {
-        width: 32px; height: 32px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        width: 32px; height: 32px; border-radius: 4px;
+        background: var(--accent2);
         display: flex; align-items: center; justify-content: center;
-        font-size: 0.8rem; font-weight: 700; color: #fff; flex-shrink: 0;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.9rem; font-weight: 900; color: #fff; flex-shrink: 0;
+        letter-spacing: 0.02em;
     }
-    .card-author { font-size: 0.85rem; color: var(--muted); }
-    .card-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem; }
-    .card-items { list-style: none; margin-bottom: 1rem; }
-    .card-items li { display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0; font-size: 0.9rem; color: #b0b0c0; border-bottom: 1px solid var(--border); }
+    .avatar.green { background: var(--accent); color: #fff; }
+
+    .compose-placeholder {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .list-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+        transition: border-color 0.15s;
+    }
+    .list-card:hover { border-color: var(--accent); }
+
+    .card-top {
+        padding: 1rem 1.25rem 0.75rem;
+    }
+
+    .card-meta { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+    .card-author {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.85rem;
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        transition: color 0.15s;
+    }
+    .card-author:hover { color: var(--accent3); }
+
+    .card-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        line-height: 1.2;
+        color: var(--text);
+    }
+
+    .card-items {
+        list-style: none;
+        border-top: 1px solid var(--border);
+    }
+    .card-items li {
+        display: flex; align-items: center; gap: 0;
+        font-size: 0.9rem;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        transition: background 0.1s;
+    }
     .card-items li:last-child { border-bottom: none; }
-    .rank { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.75rem; color: var(--accent); width: 18px; flex-shrink: 0; }
-    .card-actions { display: flex; gap: 1.25rem; margin-top: 0.75rem; }
-    .action-btn { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; font-family: 'DM Sans', sans-serif; }
-    .action-btn:hover { color: var(--accent); }
-    .compose-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s; text-decoration: none; }
-    .compose-bar:hover { border-color: var(--accent); }
-    .compose-placeholder { color: var(--muted); font-size: 0.95rem; }
+    .card-items li:hover { background: var(--surface2); }
+
+    .rank {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 900;
+        font-size: 0.8rem;
+        color: var(--accent);
+        background: var(--surface3);
+        width: 32px;
+        min-height: 36px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: stretch;
+    }
+    .rank.bullet {
+        background: var(--surface3);
+        color: var(--accent);
+        font-size: 1rem;
+    }
+
+    .item-text { padding: 0.5rem 1rem; font-size: 0.88rem; }
+
+    .card-actions {
+        display: flex; gap: 0;
+        border-top: 1px solid var(--border);
+        background: var(--surface2);
+    }
+    .action-btn {
+        background: none; border: none; border-right: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.75rem;
+        cursor: pointer; display: flex; align-items: center; gap: 0.35rem;
+        transition: all 0.15s;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        padding: 0.55rem 1rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+    .action-btn:hover { color: var(--accent); background: var(--surface3); }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--muted);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+    }
+    .empty-state p { font-size: 0.9rem; margin-bottom: 0.5rem; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 0.06em; }
+    .empty-state a { color: var(--accent); text-decoration: none; font-weight: 700; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="feed-header">
-    <h1>Your Feed</h1>
+    <h1>Your <span>Feed</span></h1>
     <a href="{% url 'create_list' %}" class="btn btn-primary">+ New List</a>
 </div>
 
 <a href="{% url 'create_list' %}" class="compose-bar">
-    <div class="avatar">{{ user.username|first|upper }}</div>
-    <span class="compose-placeholder">Share a list with the world...</span>
+    <div class="avatar green">{{ user.username|first|upper }}</div>
+    <span class="compose-placeholder">▶ Drop a new list...</span>
 </a>
 
 {% for list in lists %}
 <div class="list-card">
-    <div class="card-meta">
-        <div class="avatar">{{ list.author.username|first|upper }}</div>
-        <a href="{% url 'user_page' list.author.username %}" class="card-author" style="text-decoration:none;">@{{ list.author.username }}</a>
+    <div class="card-top">
+        <div class="card-meta">
+            <div class="avatar">{{ list.author.username|first|upper }}</div>
+            <a href="{% url 'user_page' list.author.username %}" class="card-author">@{{ list.author.username }}</a>
+        </div>
+        <div class="card-title">{{ list.title }}</div>
     </div>
-    <div class="card-title">{{ list.title }}</div>
     {% if list.list_type == 'ordered' %}
     <ol class="card-items" style="list-style:none;">
         {% for item in list.items.all %}
-        <li><span class="rank">{{ forloop.counter }}.</span>{{ item.text }}</li>
+        <li><span class="rank">{{ forloop.counter }}</span><span class="item-text">{{ item.text }}</span></li>
         {% endfor %}
     </ol>
     {% else %}
     <ul class="card-items" style="list-style:none;">
         {% for item in list.items.all %}
-        <li><span class="rank">•</span>{{ item.text }}</li>
+        <li><span class="rank bullet">•</span><span class="item-text">{{ item.text }}</span></li>
         {% endfor %}
     </ul>
     {% endif %}
@@ -69,9 +189,9 @@
     </div>
 </div>
 {% empty %}
-<div style="text-align:center; color:var(--muted); padding: 3rem 0;">
-    <p style="font-size:1.1rem;">No lists yet.</p>
-    <p style="font-size:0.9rem; margin-top:0.5rem;">Be the first to <a href="{% url 'create_list' %}" style="color:var(--accent);">share one</a>.</p>
+<div class="empty-state">
+    <p>No lists yet.</p>
+    <p style="font-size:0.85rem; margin-top:0.3rem;">Be the first to <a href="{% url 'create_list' %}">share one</a>.</p>
 </div>
 {% endfor %}
 {% endblock %}
