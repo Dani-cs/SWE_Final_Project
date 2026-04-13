@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}@{{ user.username }} — ListShare{% endblock %}
+{% block title %}@{{ profile_user.username }} — ListShare{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -11,6 +11,15 @@
     .stat { text-align: center; }
     .stat-num { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
     .stat-label { font-size: 0.75rem; color: var(--muted); }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .section-header h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .list-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; transition: border-color 0.2s, transform 0.15s; }
+    .list-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .card-items { list-style: none; margin-bottom: 0.5rem; }
+    .card-items li { display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0; font-size: 0.9rem; color: #b0b0c0; border-bottom: 1px solid var(--border); }
+    .card-items li:last-child { border-bottom: none; }
+    .rank { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.75rem; color: var(--accent); width: 18px; flex-shrink: 0; }
     .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
     .empty-state p { margin-bottom: 1rem; }
 </style>
@@ -18,19 +27,51 @@
 
 {% block content %}
 <div class="profile-header">
-    <div class="profile-avatar">{{ user.username|first|upper }}</div>
+    <div class="profile-avatar">{{ profile_user.username|first|upper }}</div>
     <div class="profile-info">
-        <h2>{{ user.get_full_name|default:user.username }}</h2>
-        <div class="handle">@{{ user.username }}</div>
+        <h2>{{ profile_user.get_full_name|default:profile_user.username }}</h2>
+        <div class="handle">@{{ profile_user.username }}</div>
         <div class="profile-stats">
-            <div class="stat"><div class="stat-num">0</div><div class="stat-label">Lists</div></div>
-            <div class="stat"><div class="stat-num">0</div><div class="stat-label">Followers</div></div>
-            <div class="stat"><div class="stat-num">0</div><div class="stat-label">Following</div></div>
+            <div class="stat">
+                <div class="stat-num">{{ lists|length }}</div>
+                <div class="stat-label">Lists</div>
+            </div>
         </div>
     </div>
 </div>
-<div class="empty-state">
-    <p>You haven't shared any lists yet.</p>
-    <a href="#" class="btn btn-primary">+ Create your first list</a>
+
+<div class="section-header">
+    <h3>{% if is_own_profile %}Your Lists{% else %}Lists by @{{ profile_user.username }}{% endif %}</h3>
+    {% if is_own_profile %}
+        <a href="{% url 'create_list' %}" class="btn btn-primary">+ New List</a>
+    {% endif %}
 </div>
+
+{% for list in lists %}
+<div class="list-card">
+    <div class="card-title">{{ list.title }}</div>
+    {% if list.list_type == 'ordered' %}
+    <ol class="card-items" style="list-style:none;">
+        {% for item in list.items.all %}
+        <li><span class="rank">{{ forloop.counter }}.</span>{{ item.text }}</li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    <ul class="card-items" style="list-style:none;">
+        {% for item in list.items.all %}
+        <li><span class="rank">•</span>{{ item.text }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% empty %}
+<div class="empty-state">
+    {% if is_own_profile %}
+        <p>You haven't shared any lists yet.</p>
+        <a href="{% url 'create_list' %}" class="btn btn-primary">+ Create your first list</a>
+    {% else %}
+        <p>@{{ profile_user.username }} hasn't shared any lists yet.</p>
+    {% endif %}
+</div>
+{% endfor %}
 {% endblock %}

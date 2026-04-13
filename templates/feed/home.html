@@ -48,7 +48,7 @@
 <div class="list-card">
     <div class="card-meta">
         <div class="avatar">{{ list.author.username|first|upper }}</div>
-        <span class="card-author">@{{ list.author.username }}</span>
+        <a href="{% url 'user_page' list.author.username %}" class="card-author" style="text-decoration:none;">@{{ list.author.username }}</a>
     </div>
     <div class="card-title">{{ list.title }}</div>
     {% if list.list_type == 'ordered' %}

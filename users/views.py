@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import RegisterForm
+from feed.models import List
 
 
 def register_view(request):
@@ -46,4 +48,19 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    return render(request, 'users/profile.html', {'user': request.user})
+    lists = List.objects.filter(author=request.user).prefetch_related('items')
+    return render(request, 'users/profile.html', {
+        'profile_user': request.user,
+        'lists': lists,
+        'is_own_profile': True,
+    })
+
+
+def user_page_view(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    lists = List.objects.filter(author=profile_user).prefetch_related('items')
+    return render(request, 'users/profile.html', {
+        'profile_user': profile_user,
+        'lists': lists,
+        'is_own_profile': request.user.is_authenticated and request.user == profile_user,
+    })
