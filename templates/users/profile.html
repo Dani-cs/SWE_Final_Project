@@ -36,10 +36,32 @@
                 <div class="stat-num">{{ lists|length }}</div>
                 <div class="stat-label">Lists</div>
             </div>
+            <div class="stat">
+                <div class="stat-num">{{ followers_count }}</div>
+                <div class="stat-label">Followers</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">{{ following_count }}</div>
+                <div class="stat-label">Following</div>
+            </div>
         </div>
         {% if is_own_profile %}
             <div style="margin-top: 0.75rem;">
                 <a href="{% url 'edit_profile' %}" class="btn btn-outline">Edit profile</a>
+            </div>
+        {% else %}
+            <div style="margin-top: 0.75rem;">
+                {% if is_following %}
+                    <form method="POST" action="{% url 'unfollow_user' profile_user.username %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline">Unfollow</button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{% url 'follow_user' profile_user.username %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Follow</button>
+                    </form>
+                {% endif %}
             </div>
         {% endif %}
     </div>

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Search Users — ListShare{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-header {
+        margin-bottom: 1.5rem;
+    }
+    .search-header h1 {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 800;
+    }
+    .search-query {
+        color: var(--accent);
+    }
+    .user-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: border-color 0.2s;
+    }
+    .user-card:hover {
+        border-color: var(--accent);
+    }
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+    }
+    .user-details h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+    }
+    .user-details .username {
+        color: var(--muted);
+        font-size: 0.85rem;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--muted);
+    }
+    .btn-sm {
+        padding: 0.3rem 0.9rem;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-header">
+    <h1>Search users</h1>
+    {% if query %}
+        <p>Results for "<span class="search-query">{{ query }}</span>"</p>
+    {% else %}
+        <p>Enter a username, first name, or last name to find someone.</p>
+    {% endif %}
+</div>
+
+{% if results %}
+    {% for user in results %}
+    <div class="user-card">
+        <div class="user-info">
+            <div class="user-avatar">{{ user.username|first|upper }}</div>
+            <div class="user-details">
+                <h3>{{ user.get_full_name|default:user.username }}</h3>
+                <div class="username">@{{ user.username }}</div>
+            </div>
+        </div>
+        <a href="{% url 'user_page' user.username %}" class="btn btn-outline btn-sm">View profile</a>
+    </div>
+    {% endfor %}
+{% elif query %}
+    <div class="empty-state">
+        <p>No users found matching "{{ query }}".</p>
+        <p style="font-size: 0.85rem;">Try a different username or name.</p>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>🔍 Type a name in the search bar above.</p>
+    </div>
+{% endif %}
+{% endblock %}

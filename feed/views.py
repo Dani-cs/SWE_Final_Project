@@ -3,13 +3,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import List
 from .forms import ListForm, ListItemFormSet
+from django.db.models import Q
 
 
 @login_required
 def home_view(request):
-    lists = List.objects.select_related('author').prefetch_related('items').all()
+    # Get users that current user follows
+    following_ids = request.user.following.values_list('followed_id', flat=True)
+    # Show own lists + lists from followed users
+    lists = List.objects.filter(
+        Q(author=request.user) | Q(author_id__in=following_ids)
+    ).select_related('author').prefetch_related('items').order_by('-created_at')
     return render(request, 'feed/home.html', {'lists': lists})
-
 
 @login_required
 def create_list_view(request):
