@@ -37,6 +37,11 @@
                 <div class="stat-label">Lists</div>
             </div>
         </div>
+        {% if is_own_profile %}
+            <div style="margin-top: 0.75rem;">
+                <a href="{% url 'edit_profile' %}" class="btn btn-outline">Edit profile</a>
+            </div>
+        {% endif %}
     </div>
 </div>
 

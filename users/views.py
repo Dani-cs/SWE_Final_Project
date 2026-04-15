@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import RegisterForm
 from feed.models import List
-
+from django.contrib.auth import update_session_auth_hash  # keep user logged in after password change
+from django.contrib.auth.forms import PasswordChangeForm
+from .forms import RegisterForm, ProfileUpdateForm   # add ProfileUpdateForm
 
 def register_view(request):
     if request.user.is_authenticated:
@@ -64,3 +66,15 @@ def user_page_view(request, username):
         'lists': lists,
         'is_own_profile': request.user.is_authenticated and request.user == profile_user,
     })
+
+@login_required
+def edit_profile_view(request):
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+    return render(request, 'users/edit_profile.html', {'form': form})
