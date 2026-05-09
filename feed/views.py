@@ -13,10 +13,8 @@ def home_view(request):
     base_qs = List.objects.select_related('author', 'author__profile').prefetch_related('items', 'likes', 'comments__author')
 
     if tab == 'explore':
-        # posts from people the user does NOT follow (excluding own posts)
         lists = base_qs.exclude(author_id__in=following_ids).exclude(author=request.user)
     else:
-        # Following: own posts + posts from followed users
         in_ids = following_ids | {request.user.id}
         lists = base_qs.filter(author_id__in=in_ids)
 
