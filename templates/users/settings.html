@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Settings — ListShare{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .settings-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.78rem; font-weight: 900;
+        text-transform: uppercase; letter-spacing: 0.12em;
+        color: var(--accent); margin-bottom: 1.25rem;
+        padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+
+    .avatar-preview {
+        width: 72px; height: 72px; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 2rem; font-weight: 900; color: #fff;
+        letter-spacing: 0.02em; margin-bottom: 1.25rem;
+        transition: background 0.2s;
+    }
+
+    .color-grid {
+        display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.25rem;
+    }
+    .color-option { position: relative; }
+    .color-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .color-swatch {
+        width: 44px; height: 44px; border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1rem; font-weight: 900; color: #fff;
+        cursor: pointer; border: 3px solid transparent;
+        transition: border-color 0.15s, transform 0.1s;
+    }
+    .color-swatch:hover { transform: scale(1.1); }
+    .color-option input:checked + .color-swatch {
+        border-color: #fff;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-card">
+    <div class="settings-title">Avatar Color</div>
+
+    <div class="avatar-preview" id="avatarPreview" style="background: {{ profile.avatar_color }};">
+        {{ request.user.username|first|upper }}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="color-grid">
+            {% for color in avatar_colors %}
+            <label class="color-option">
+                <input type="radio" name="avatar_color" value="{{ color }}"
+                    {% if color == profile.avatar_color %}checked{% endif %}
+                    onchange="document.getElementById('avatarPreview').style.background='{{ color }}'">
+                <span class="color-swatch" style="background: {{ color }};">
+                    {{ request.user.username|first|upper }}
+                </span>
+            </label>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}
