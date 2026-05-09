@@ -230,6 +230,9 @@
             </div>
         </div>
     </div>
+    {% if is_own_profile %}
+    <a href="{% url 'edit_profile' %}" class="btn btn-outline" style="align-self:flex-start;margin-top:0.5rem;font-size:0.78rem;">Edit Profile</a>
+    {% endif %}
     {% if not is_own_profile and user.is_authenticated %}
     <form method="post" action="{% url 'toggle_follow' profile_user.username %}">
         {% csrf_token %}

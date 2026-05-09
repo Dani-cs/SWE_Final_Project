@@ -8,6 +8,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
     path('settings/', views.settings_view, name='settings'),
+    path('profile/edit/', views.edit_profile_view, name='edit_profile'),
+    path('search/', views.search_users_view, name='search_users'),
     path('password-change/', auth_views.PasswordChangeView.as_view(template_name='users/password_change.html'), name='password_change'),
     path('password-change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='users/password_change_done.html'), name='password_change_done'),
     path('follow/<str:username>/', views.toggle_follow_view, name='toggle_follow'),

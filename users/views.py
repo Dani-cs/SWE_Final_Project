@@ -4,7 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import RegisterForm
+from django.db.models import Q
+from .forms import RegisterForm, ProfileUpdateForm
 from .models import Follow, UserProfile, AVATAR_COLORS
 from feed.models import List, Comment
 from feed.forms import CommentForm
@@ -138,6 +139,35 @@ def settings_view(request):
         'profile': profile,
         'avatar_colors': AVATAR_COLORS,
     })
+
+
+@login_required
+def edit_profile_view(request):
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+    return render(request, 'users/edit_profile.html', {'form': form})
+
+
+def search_users_view(request):
+    query = request.GET.get('q', '').strip()
+    results = []
+    if query:
+        results = User.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        ).exclude(id=request.user.id)[:20] if request.user.is_authenticated else User.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        )[:20]
+    return render(request, 'users/search.html', {'query': query, 'results': results})
 
 
 @login_required
