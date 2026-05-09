@@ -138,6 +138,67 @@
         text-transform: uppercase;
     }
     .action-btn:hover { color: var(--accent); background: var(--surface3); }
+    .action-btn.liked { color: var(--accent); }
+    .action-btn.commented { color: var(--accent2); }
+
+    details.comments-section { border-top: 1px solid var(--border); }
+    details.comments-section summary {
+        list-style: none; display: flex; align-items: center; gap: 0.35rem;
+        background: none; border: none; border-right: 1px solid var(--border);
+        color: var(--muted); font-size: 0.75rem; cursor: pointer;
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+        padding: 0.55rem 1rem; letter-spacing: 0.05em; text-transform: uppercase;
+        transition: all 0.15s; width: fit-content;
+    }
+    details.comments-section summary::-webkit-details-marker { display: none; }
+    details.comments-section summary:hover { color: var(--accent2); background: var(--surface3); }
+    details[open].comments-section summary { color: var(--accent2); }
+    details[open].comments-section summary.has-commented { color: var(--accent2); }
+
+    .comments-body { padding: 0.6rem 1.1rem; background: var(--surface2); }
+    .comment-row {
+        display: flex; gap: 0.5rem; align-items: baseline;
+        padding: 0.3rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem;
+    }
+    .comment-row:last-of-type { border-bottom: none; }
+    .comment-author {
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+        color: var(--accent); font-size: 0.78rem; letter-spacing: 0.04em;
+        text-transform: uppercase; text-decoration: none; flex-shrink: 0;
+    }
+    .comment-author:hover { color: var(--accent3); }
+    .comment-text { color: var(--text); }
+    .comment-form-row {
+        display: flex; gap: 0.5rem; margin-top: 0.6rem; padding-top: 0.5rem;
+        border-top: 1px solid var(--border);
+    }
+    .comment-form-row input {
+        flex: 1; background: var(--surface3); border: 1px solid var(--border);
+        border-radius: 4px; color: var(--text); font-size: 0.82rem;
+        padding: 0.35rem 0.6rem; font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 600; letter-spacing: 0.03em;
+    }
+    .comment-form-row input:focus { outline: none; border-color: var(--accent2); }
+    .comment-submit {
+        background: var(--accent2); border: none; border-radius: 4px;
+        color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+        font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase;
+        padding: 0.35rem 0.75rem; cursor: pointer; transition: opacity 0.15s;
+    }
+    .comment-submit:hover { opacity: 0.85; }
+
+    .feed-tabs {
+        display: flex; border-bottom: 2px solid var(--border); margin-bottom: 1rem;
+    }
+    .feed-tab {
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+        font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--muted); text-decoration: none;
+        padding: 0.55rem 1.1rem; border-bottom: 2px solid transparent;
+        margin-bottom: -2px; transition: all 0.15s;
+    }
+    .feed-tab:hover { color: var(--text); }
+    .feed-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     .empty-state {
         text-align: center;
@@ -158,15 +219,20 @@
 </div>
 
 <a href="{% url 'create_list' %}" class="compose-bar">
-    <div class="avatar green">{{ user.username|first|upper }}</div>
+    <div class="avatar" style="background: {{ user.profile.avatar_color }};">{{ user.username|first|upper }}</div>
     <span class="compose-placeholder">▶ Drop a new list...</span>
 </a>
+
+<div class="feed-tabs">
+    <a href="?tab=following" class="feed-tab {% if active_tab != 'explore' %}active{% endif %}">Following</a>
+    <a href="?tab=explore" class="feed-tab {% if active_tab == 'explore' %}active{% endif %}">Explore</a>
+</div>
 
 {% for list in lists %}
 <div class="list-card">
     <div class="card-top">
         <div class="card-meta">
-            <div class="avatar">{{ list.author.username|first|upper }}</div>
+            <div class="avatar" style="background: {{ list.author.profile.avatar_color }};">{{ list.author.username|first|upper }}</div>
             <a href="{% url 'user_page' list.author.username %}" class="card-author">@{{ list.author.username }}</a>
         </div>
         <div class="card-title">{{ list.title }}</div>
@@ -185,13 +251,46 @@
     </ul>
     {% endif %}
     <div class="card-actions">
+        <form method="post" action="{% url 'toggle_like' list.pk %}" style="display:contents;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button type="submit" class="action-btn {% if list.pk in liked_ids %}liked{% endif %}">
+                ♥ {{ list.likes.count }}
+            </button>
+        </form>
         <button class="action-btn">↗ Share</button>
     </div>
+    <details class="comments-section">
+        <summary class="{% if list.pk in commented_ids %}has-commented{% endif %}">
+            💬 {{ list.comments.count }}{% if list.comments.count == 1 %} Comment{% else %} Comments{% endif %}
+        </summary>
+        <div class="comments-body">
+            {% for comment in list.comments.all %}
+            <div class="comment-row">
+                <a href="{% url 'user_page' comment.author.username %}" class="comment-author">@{{ comment.author.username }}</a>
+                <span class="comment-text">{{ comment.text }}</span>
+            </div>
+            {% empty %}
+            <p style="color:var(--muted);font-size:0.8rem;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:0.05em;padding:0.25rem 0;">No comments yet.</p>
+            {% endfor %}
+            <form method="post" action="{% url 'add_comment' list.pk %}" class="comment-form-row">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                {{ comment_form.text }}
+                <button type="submit" class="comment-submit">Post</button>
+            </form>
+        </div>
+    </details>
 </div>
 {% empty %}
 <div class="empty-state">
-    <p>No lists yet.</p>
-    <p style="font-size:0.85rem; margin-top:0.3rem;">Be the first to <a href="{% url 'create_list' %}">share one</a>.</p>
+    {% if active_tab == 'explore' %}
+        <p>Nothing to explore yet.</p>
+        <p style="font-size:0.85rem; margin-top:0.3rem;">Check back once others start posting.</p>
+    {% else %}
+        <p>Your following feed is empty.</p>
+        <p style="font-size:0.85rem; margin-top:0.3rem;">Follow some users or <a href="?tab=explore">explore</a> to discover lists.</p>
+    {% endif %}
 </div>
 {% endfor %}
 {% endblock %}

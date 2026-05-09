@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import List, ListItem
+from .models import List, ListItem, Comment
 
 
 class ListForm(forms.ModelForm):
@@ -11,6 +11,16 @@ class ListForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'placeholder': 'Give your list a title...'}),
             'list_type': forms.RadioSelect(),
         }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.TextInput(attrs={'placeholder': 'Write a comment...', 'autocomplete': 'off'}),
+        }
+        labels = {'text': ''}
 
 
 ListItemFormSet = inlineformset_factory(

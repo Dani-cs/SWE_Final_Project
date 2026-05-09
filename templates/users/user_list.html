@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}
+    {% if list_type == 'followers' %}Followers of @{{ profile_user.username }}{% else %}@{{ profile_user.username }} is Following{% endif %} — ListShare
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex; align-items: center; gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    .back-link {
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+        font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+        color: var(--muted); text-decoration: none; transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+    .page-header h1 {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.4rem; font-weight: 900;
+        text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .page-header h1 span { color: var(--accent); }
+
+    .user-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 0.9rem 1.1rem;
+        margin-bottom: 0.6rem; display: flex; align-items: center;
+        gap: 0.85rem; transition: border-color 0.15s;
+    }
+    .user-card:hover { border-color: var(--accent2); }
+
+    .avatar {
+        width: 44px; height: 44px; border-radius: 6px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.2rem; font-weight: 900; color: #fff;
+        letter-spacing: 0.02em;
+    }
+    .user-info { flex: 1; }
+    .user-info .name {
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+        font-size: 1rem; letter-spacing: 0.04em; text-transform: uppercase;
+        color: var(--text); text-decoration: none; transition: color 0.15s;
+    }
+    .user-info .name:hover { color: var(--accent); }
+    .user-info .handle {
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+        font-size: 0.75rem; color: var(--muted); letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .follow-btn {
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+        font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+        border: 2px solid var(--accent); border-radius: 4px;
+        padding: 0.3rem 0.85rem; cursor: pointer; transition: all 0.15s;
+        background: none; color: var(--accent); flex-shrink: 0;
+    }
+    .follow-btn:hover { background: var(--accent); color: #0a0f1a; }
+    .follow-btn.following { border-color: var(--muted2); color: var(--muted2); }
+    .follow-btn.following:hover { border-color: #e74c3c; color: #e74c3c; }
+
+    .empty-state {
+        text-align: center; padding: 3rem 1rem; color: var(--muted);
+        border: 1px dashed var(--border); border-radius: var(--radius);
+    }
+    .empty-state p {
+        font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase;
+        letter-spacing: 0.06em; font-size: 0.88rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'user_page' profile_user.username %}" class="back-link">← @{{ profile_user.username }}</a>
+    <h1>
+        {% if list_type == 'followers' %}
+            <span>Followers</span>
+        {% else %}
+            <span>Following</span>
+        {% endif %}
+    </h1>
+</div>
+
+{% for u in users %}
+<div class="user-card">
+    <div class="avatar" style="background: {{ u.profile.avatar_color }};">{{ u.username|first|upper }}</div>
+    <div class="user-info">
+        <a href="{% url 'user_page' u.username %}" class="name">{{ u.username }}</a>
+        <div class="handle">@{{ u.username }}</div>
+    </div>
+    {% if user.is_authenticated and u != user %}
+    <form method="post" action="{% url 'toggle_follow' u.username %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="follow-btn {% if u.id in viewer_following_ids %}following{% endif %}">
+            {% if u.id in viewer_following_ids %}Following{% else %}Follow{% endif %}
+        </button>
+    </form>
+    {% endif %}
+</div>
+{% empty %}
+<div class="empty-state">
+    {% if list_type == 'followers' %}
+        <p>@{{ profile_user.username }} has no followers yet.</p>
+    {% else %}
+        <p>@{{ profile_user.username }} isn't following anyone yet.</p>
+    {% endif %}
+</div>
+{% endfor %}
+{% endblock %}
